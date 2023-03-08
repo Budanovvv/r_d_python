@@ -1,1 +1,1 @@
-print("I love Python \n" * 43)
+print("I love Python \n" * 42)
