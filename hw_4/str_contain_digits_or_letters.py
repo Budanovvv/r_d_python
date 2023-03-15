@@ -6,8 +6,8 @@ def match_data_type(data):
             print("Digit -> Double number")
         else:
             print("Digit -> Undouble number")
-    elif data.isalpha():  # Try to find only letters
-        print("Data -> Contain only letters")
+    elif data.isalpha():  # Try to find only letters, and their length
+        print(f"Data -> Contain only letters and their length -> {len(data)}")
     elif data.isalnum():  # Try to find only letters and digits
         print("Data -> Contain letters and digits")
     else:  # Exception if finding something other than letters and digits
