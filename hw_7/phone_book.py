@@ -38,15 +38,33 @@ def delete_contact_by_name(contact_name):
         contact_list.remove(contact)
         return contact_list
     else:
-        print("I dont find this contact ib yore phone book")
+        print("I dont find this contact in yore phone book")
         exit()
+
+
+def show_contact_by_name(contact_name):
+    contact = find_name_in_pb(contact_name)
+    if contact is not None:
+        print(f"This is contact that you search: \n {contact}")
+        exit()
+    else:
+        print("I dont find this contact in yore phone book")
+        exit()
+
+
+def list_all_contacts():
+    for contact in contact_list:
+        contact_name = contact.get("name")
+        contact_phone = contact.get("phone")
+        print(f"name: {contact_name}, phone: {contact_phone}")
+    exit()
 
 
 def work_with_phone_book():
     print("Hi my phone book can: \n",
           "- add contact           => Add \n",
           "- delete a contact      => Delete <name> \n",
-          "- Show contact details  => show <name> \n",
+          "- Show contact details  => Show <name> \n",
           "- get number of contact => stats \n",
           "- list all contacts     => list \n",
           )
@@ -60,6 +78,14 @@ def work_with_phone_book():
     elif command == "delete":
         contact_name_to_delete = input("Which contact do you want to delete?: ")
         return delete_contact_by_name(contact_name_to_delete)
+    elif command == "show":
+        contact_name = input("Which contact do you want to find?: ")
+        show_contact_by_name(contact_name)
+    elif command == "stats":
+        length = lambda x: len(contact_list)
+        return print(f"Your phone book have {length} contacts")
+    elif command == "list":
+        list_all_contacts()
     else:
         print(f"I don't know this command => {command}")
 
