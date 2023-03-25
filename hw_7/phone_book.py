@@ -19,7 +19,6 @@ def check_for_duplicate(contact: dict):
     new_contact_name = contact.get("name")
     if find_name_in_pb(new_contact_name):
         print(f"This name => {new_contact_name},  is already in your contact list try another contact name")
-        exit()
     else:
         print("Contact is unique")
         return True
@@ -28,7 +27,6 @@ def check_for_duplicate(contact: dict):
 def add_new_contact(contact: dict):
     contact_list.append(contact)
     print(f"Contact was added => {contact}")
-    return contact_list
 
 
 def delete_contact_by_name(contact_name):
@@ -36,20 +34,16 @@ def delete_contact_by_name(contact_name):
     if contact is not None:
         print(f"I found this contact and deleted them")
         contact_list.remove(contact)
-        return contact_list
     else:
         print("I dont find this contact in yore phone book")
-        exit()
 
 
 def show_contact_by_name(contact_name):
     contact = find_name_in_pb(contact_name)
     if contact is not None:
         print(f"This is contact that you search: \n {contact}")
-        exit()
     else:
         print("I dont find this contact in yore phone book")
-        exit()
 
 
 def list_all_contacts():
@@ -57,7 +51,6 @@ def list_all_contacts():
         contact_name = contact.get("name")
         contact_phone = contact.get("phone")
         print(f"name: {contact_name}, phone: {contact_phone}")
-    exit()
 
 
 def work_with_phone_book():
@@ -68,29 +61,31 @@ def work_with_phone_book():
           "- get number of contact => stats \n",
           "- list all contacts     => list \n",
           )
+    while True:
+        cmd = input("Enter your command: ")
+        command = cmd.lower()
+        if command == "add":
+            new_contact = make_contact()
+            if not contact_list:
+                if check_for_duplicate(new_contact) is not None:
+                    add_new_contact(new_contact)
+            else:
+                add_new_contact(new_contact)
+        elif command == "delete":
+            contact_name_to_delete = input("Which contact do you want to delete?: ")
+            delete_contact_by_name(contact_name_to_delete)
+        elif command == "show":
+            contact_name = input("Which contact do you want to find?: ")
+            show_contact_by_name(contact_name)
+        elif command == "stats":
+            length = lambda x: len(contact_list)
+            print(f"Your phone book have {length} contacts")
+        elif command == "list":
+            list_all_contacts()
+        elif command == "stop":
+            break
+        else:
+            print(f"I don't know this command => {command}")
 
-    cmd = input("Enter your command: ")
-    command = cmd.lower()
-    if command == "add":
-        new_contact = make_contact()
-        if check_for_duplicate(new_contact) is not None:
-            return add_new_contact(new_contact)
-    elif command == "delete":
-        contact_name_to_delete = input("Which contact do you want to delete?: ")
-        return delete_contact_by_name(contact_name_to_delete)
-    elif command == "show":
-        contact_name = input("Which contact do you want to find?: ")
-        show_contact_by_name(contact_name)
-    elif command == "stats":
-        length = lambda x: len(contact_list)
-        return print(f"Your phone book have {length} contacts")
-    elif command == "list":
-        list_all_contacts()
-    else:
-        print(f"I don't know this command => {command}")
 
-
-# print(make_contact())
 print(work_with_phone_book())
-
-# print(add_new_contact(check_for_duplicate(make_contact())))
