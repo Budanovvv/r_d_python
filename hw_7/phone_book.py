@@ -53,6 +53,10 @@ def list_all_contacts():
         print(f"name: {contact_name}, phone: {contact_phone}")
 
 
+def length():
+    return len(contact_list)
+
+
 def work_with_phone_book():
     print("Hi my phone book can: \n",
           "- add contact           => Add \n",
@@ -60,6 +64,7 @@ def work_with_phone_book():
           "- Show contact details  => Show <name> \n",
           "- get number of contact => stats \n",
           "- list all contacts     => list \n",
+          "- Stop working          => stop \n",
           )
     while True:
         cmd = input("Enter your command: ")
@@ -78,8 +83,8 @@ def work_with_phone_book():
             contact_name = input("Which contact do you want to find?: ")
             show_contact_by_name(contact_name)
         elif command == "stats":
-            length = lambda x: len(contact_list)
-            print(f"Your phone book have {length} contacts")
+
+            print(f"Your phone book have {length()} contacts")
         elif command == "list":
             list_all_contacts()
         elif command == "stop":
