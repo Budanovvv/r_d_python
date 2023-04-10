@@ -5,16 +5,16 @@ class MyCustomException(Exception):
     pass
 
 
-def add_contact_list(list=None):  # Add this like some function which should check and get some data for pb
+def add_contact_list(list_=None):  # Add this like some function which should check and get some data for pb
     try:
-        if list is None:
+        if list_ is None:
             raise MyCustomException("Custom exception is occurred")
     except MyCustomException as e:
         print(e)
     finally:
-        if list is None:
-            list = []
-        return list
+        if list_ is None:
+            list_ = []
+        return list_
 
 
 cnt_lst = [
