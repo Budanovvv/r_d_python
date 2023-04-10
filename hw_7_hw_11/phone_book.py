@@ -34,7 +34,7 @@ def make_contact(max_tries: int = 3) -> dict:
                 name = input("Please add a name: ")
             if phone == "":
                 phone = int(input("Please add a phone number: "))
-            while not name:
+            if not name:
                 raise MyCustomException("Custom exception is occurred")
         except MyCustomException as e:
             print(e)
