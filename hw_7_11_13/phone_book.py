@@ -1,28 +1,26 @@
 from tabulate import tabulate
+import json
 
 
 class MyCustomException(Exception):
     pass
 
 
-def add_contact_list(list_=None):  # Add this like some function which should check and get some data for pb
+def add_contact_list():  # Add this like some function which should check and get some data for pb
     try:
-        if list_ is None:
-            raise MyCustomException("Custom exception is occurred")
-    except MyCustomException as e:
+        with open("fixture/phone_book.json", "r") as file:
+            f = file.read()
+            return json.loads(f)
+    except FileNotFoundError as e:
         print(e)
-    finally:
-        if list_ is None:
-            list_ = []
-        return list_
+        with open("fixture/phone_book.json", "w") as file:
+            file.write("[]")
+        with open("fixture/phone_book.json", "r") as file:
+            f = file.read()
+            return json.loads(f)
 
 
-cnt_lst = [
-    {"name": "sss", "phone": "2222"},
-    {"name": "ddd", "phone": "2222"}
-]
-
-contact_list = add_contact_list(cnt_lst)
+contact_list = add_contact_list()
 
 
 def make_contact(max_tries: int = 3) -> dict:
@@ -53,8 +51,11 @@ def find_name_in_pb(contact_name: str) -> dict:
     check_len = check_contact_list_length()
     if check_len > 0:
         for contact in contact_list:
-            if contact["name"] == contact_name:
-                return contact
+            try:
+                if contact["name"] == contact_name:
+                    return contact
+            except TypeError as e:
+                print(e)
     else:
         print(f"You don't have any contacts")
 
@@ -72,9 +73,12 @@ def check_for_duplicate(contact: dict) -> bool:
 def add_new_contact(contact: dict):
     if check_for_duplicate(contact):
         if contact is not None:
-            contact_list.append(contact)
-            print(f"\nContact was added => {contact}")
-            return True
+            try:
+                contact_list.append(contact)
+                print(f"\nContact was added => {contact}")
+                return True
+            except AttributeError as e:
+                print(e)
         else:
             print("\nContact couldn't be created")
             return False
@@ -167,6 +171,9 @@ def work_with_phone_book():
             break
         else:
             print(f"\nI don't know this command => {command}")
+        with open("fixture/phone_book.json", "w") as file:
+            f = json.dumps(contact_list)
+            file.write(f)
 
 
 work_with_phone_book()
