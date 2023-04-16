@@ -5,7 +5,14 @@ import time
 
 
 class MyCustomException(Exception):
-    pass
+    log_file = "fixture/exception.log"
+
+    if not os.path.exists(log_file):
+        with open(log_file, "w") as file:
+            print(f"{time.asctime()} ====> {Exception.__cause__}", file=file)
+    else:
+        with open(log_file, "a") as file:
+            print(f"{time.asctime()} ====> {Exception.__cause__}", file=file)
 
 
 def launch_logging(func):
@@ -84,13 +91,16 @@ def find_name_in_pb(contact_name: str) -> dict:
 
 @launch_logging
 def check_for_duplicate(contact: dict) -> bool:
-    new_contact_name = contact.get("name")
-    if find_name_in_pb(new_contact_name):
-        print(f"\nThis name => {new_contact_name},  is already in your contact list try another contact name")
-        return False
-    else:
-        print("\nContact is unique")
-        return True
+    try:
+        new_contact_name = contact.get("name")
+        if find_name_in_pb(new_contact_name):
+            print(f"\nThis name => {new_contact_name},  is already in your contact list try another contact name")
+            return False
+        else:
+            print("\nContact is unique")
+            return True
+    except AttributeError as e:
+        print(e)
 
 
 @launch_logging
@@ -201,7 +211,7 @@ def work_with_phone_book():
         else:
             print(f"\nI don't know this command => {command}")
         with open("fixture/phone_book.json", "w") as file:
-            f = json.dumps(contact_list)
+            f = json.dumps(contact_list, indent=4)
             file.write(f)
 
 
