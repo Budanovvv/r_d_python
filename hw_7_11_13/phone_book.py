@@ -1,12 +1,31 @@
 from tabulate import tabulate
 import json
+import os
+import time
 
 
 class MyCustomException(Exception):
     pass
 
 
-def add_contact_list():  # Add this like some function which should check and get some data for pb
+def launch_logging(func):
+    log_file = "fixture/launch.log"
+
+    def wrapper(*args, **kwargs):
+        if not os.path.exists(log_file):
+            with open(log_file, "w") as file:
+                print(f"{time.asctime()} ====> {func.__name__}", file=file)
+        else:
+            with open(log_file, "a") as file:
+                print(f"{time.asctime()} ====> {func.__name__}", file=file)
+        result = func(*args, **kwargs)
+        return result
+
+    return wrapper
+
+
+@launch_logging
+def add_contact_list() -> list:
     try:
         with open("fixture/phone_book.json", "r") as file:
             f = file.read()
@@ -17,12 +36,14 @@ def add_contact_list():  # Add this like some function which should check and ge
             file.write("[]")
         with open("fixture/phone_book.json", "r") as file:
             f = file.read()
-            return json.loads(f)
+        return json.loads(f)
 
 
 contact_list = add_contact_list()
+print(contact_list)
 
 
+@launch_logging
 def make_contact(max_tries: int = 3) -> dict:
     name = ""
     phone = ""
@@ -47,6 +68,7 @@ def make_contact(max_tries: int = 3) -> dict:
             max_tries -= 1
 
 
+@launch_logging
 def find_name_in_pb(contact_name: str) -> dict:
     check_len = check_contact_list_length()
     if check_len > 0:
@@ -60,6 +82,7 @@ def find_name_in_pb(contact_name: str) -> dict:
         print(f"You don't have any contacts")
 
 
+@launch_logging
 def check_for_duplicate(contact: dict) -> bool:
     new_contact_name = contact.get("name")
     if find_name_in_pb(new_contact_name):
@@ -70,6 +93,7 @@ def check_for_duplicate(contact: dict) -> bool:
         return True
 
 
+@launch_logging
 def add_new_contact(contact: dict):
     if check_for_duplicate(contact):
         if contact is not None:
@@ -84,6 +108,7 @@ def add_new_contact(contact: dict):
             return False
 
 
+@launch_logging
 def delete_contact_by_name(contact_name: str) -> bool:
     contact = find_name_in_pb(contact_name)
     if contact is not None:
@@ -95,6 +120,7 @@ def delete_contact_by_name(contact_name: str) -> bool:
         return False
 
 
+@launch_logging
 def show_contact_by_name(contact_name):
     contact = find_name_in_pb(contact_name)
     if contact is not None:
@@ -103,6 +129,7 @@ def show_contact_by_name(contact_name):
         print("\nI dont find this contact in yore phone book")
 
 
+@launch_logging
 def list_all_contacts():
     check_len = check_contact_list_length()
     if check_len > 0:
@@ -115,6 +142,7 @@ def list_all_contacts():
         print(f"\nYou don't have any contacts")
 
 
+@launch_logging
 def check_contact_list_length():
     try:
         cnt_len = len(contact_list)
@@ -124,6 +152,7 @@ def check_contact_list_length():
         return cnt_len
 
 
+@launch_logging
 def work_with_phone_book():
     print("Hi my phone book can: \n",
           "- add contact           => Add \n",
