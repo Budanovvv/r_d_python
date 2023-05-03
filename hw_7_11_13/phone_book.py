@@ -1,30 +1,56 @@
 from tabulate import tabulate
+import json
+import os
+import time
 
 
 class MyCustomException(Exception):
-    pass
+    log_file = "fixture/exception.log"
+
+    if not os.path.exists(log_file):
+        with open(log_file, "w") as file:
+            print(f"{time.asctime()} ====> {Exception.__cause__}", file=file)
+    else:
+        with open(log_file, "a") as file:
+            print(f"{time.asctime()} ====> {Exception.__cause__}", file=file)
 
 
-def add_contact_list(list_=None):  # Add this like some function which should check and get some data for pb
+def launch_logging(func):
+    log_file = "fixture/launch.log"
+
+    def wrapper(*args, **kwargs):
+        if not os.path.exists(log_file):
+            with open(log_file, "w") as file:
+                print(f"{time.asctime()} ====> {func.__name__}", file=file)
+        else:
+            with open(log_file, "a") as file:
+                print(f"{time.asctime()} ====> {func.__name__}", file=file)
+        result = func(*args, **kwargs)
+        return result
+
+    return wrapper
+
+
+@launch_logging
+def add_contact_list() -> list:
     try:
-        if list_ is None:
-            raise MyCustomException("Custom exception is occurred")
-    except MyCustomException as e:
+        with open("fixture/phone_book.json", "r") as file:
+            f = file.read()
+            return json.loads(f)
+    except FileNotFoundError as e:
         print(e)
-    finally:
-        if list_ is None:
-            list_ = []
-        return list_
+        with open("fixture/phone_book.json", "w") as file:
+            file.write("[]")
+        with open("fixture/phone_book.json", "r") as file:
+            f = file.read()
+        return json.loads(f)
 
 
-cnt_lst = [
-    {"name": "sss", "phone": "2222"},
-    {"name": "ddd", "phone": "2222"}
-]
-
-contact_list = add_contact_list(cnt_lst)
+contact_list = add_contact_list()
+print(contact_list)
 
 
+@launch_logging
 def make_contact(max_tries: int = 3) -> dict:
     name = ""
     phone = ""
@@ -49,37 +75,50 @@ def make_contact(max_tries: int = 3) -> dict:
             max_tries -= 1
 
 
+@launch_logging
 def find_name_in_pb(contact_name: str) -> dict:
     check_len = check_contact_list_length()
     if check_len > 0:
         for contact in contact_list:
-            if contact["name"] == contact_name:
-                return contact
+            try:
+                if contact["name"] == contact_name:
+                    return contact
+            except TypeError as e:
+                print(e)
     else:
         print(f"You don't have any contacts")
 
 
+@launch_logging
 def check_for_duplicate(contact: dict) -> bool:
-    new_contact_name = contact.get("name")
-    if find_name_in_pb(new_contact_name):
-        print(f"\nThis name => {new_contact_name},  is already in your contact list try another contact name")
-        return False
-    else:
-        print("\nContact is unique")
-        return True
+    try:
+        new_contact_name = contact.get("name")
+        if find_name_in_pb(new_contact_name):
+            print(f"\nThis name => {new_contact_name},  is already in your contact list try another contact name")
+            return False
+        else:
+            print("\nContact is unique")
+            return True
+    except AttributeError as e:
+        print(e)
 
 
+@launch_logging
 def add_new_contact(contact: dict):
     if check_for_duplicate(contact):
         if contact is not None:
-            contact_list.append(contact)
-            print(f"\nContact was added => {contact}")
-            return True
+            try:
+                contact_list.append(contact)
+                print(f"\nContact was added => {contact}")
+                return True
+            except AttributeError as e:
+                print(e)
         else:
             print("\nContact couldn't be created")
             return False
 
 
+@launch_logging
 def delete_contact_by_name(contact_name: str) -> bool:
     contact = find_name_in_pb(contact_name)
     if contact is not None:
@@ -91,6 +130,7 @@ def delete_contact_by_name(contact_name: str) -> bool:
         return False
 
 
+@launch_logging
 def show_contact_by_name(contact_name):
     contact = find_name_in_pb(contact_name)
     if contact is not None:
@@ -99,6 +139,7 @@ def show_contact_by_name(contact_name):
         print("\nI dont find this contact in yore phone book")
 
 
+@launch_logging
 def list_all_contacts():
     check_len = check_contact_list_length()
     if check_len > 0:
@@ -111,6 +152,7 @@ def list_all_contacts():
         print(f"\nYou don't have any contacts")
 
 
+@launch_logging
 def check_contact_list_length():
     try:
         cnt_len = len(contact_list)
@@ -120,6 +162,7 @@ def check_contact_list_length():
         return cnt_len
 
 
+@launch_logging
 def work_with_phone_book():
     print("Hi my phone book can: \n",
           "- add contact           => Add \n",
@@ -167,6 +210,9 @@ def work_with_phone_book():
             break
         else:
             print(f"\nI don't know this command => {command}")
+        with open("fixture/phone_book.json", "w") as file:
+            f = json.dumps(contact_list, indent=4)
+            file.write(f)
 
 
 work_with_phone_book()
