@@ -2,6 +2,7 @@ from tabulate import tabulate
 import json
 import os
 import time
+import re
 
 
 class MyCustomException(Exception):
@@ -47,19 +48,32 @@ def add_contact_list() -> list:
 
 
 contact_list = add_contact_list()
-print(contact_list)
 
 
 @launch_logging
 def make_contact(max_tries: int = 3) -> dict:
     name = ""
     phone = ""
+    new_contact = {"name": "", "phone": ""}
+
+    # Phone validation patterns
+    pattern = r'^(?:\+380|380|0)\d{9}$'  # +380XXXXXXXXX
+    # pattern2 = r'^380\d{9}$'  # 380XXXXXXXXX
+    # pattern3 = r'^0\d{9}$'  # 0XXXXXXXXX
+
     while max_tries >= 0:
         try:
             if name == "":
                 name = input("Please add a name: ")
             if phone == "":
-                phone = int(input("Please add a phone number: "))
+                phone = str(input("Please add a phone number: "))
+                if not (re.match(pattern, phone)):
+                    print("Invalid phone number format.\n"
+                          "You ca use only next formats:\n"
+                          "+380XXXXXXXXX\n",
+                          "380XXXXXXXXX\n",
+                          "0XXXXXXXXX\n")
+                    phone = ""
             if not name:
                 raise MyCustomException("Custom exception is occurred")
         except MyCustomException as e:
@@ -67,10 +81,11 @@ def make_contact(max_tries: int = 3) -> dict:
         except ValueError:
             print(f"\nPhone can contain only digits. You have {max_tries} tries")
         else:
-            new_contact = {"name": name, "phone": phone}
-            print(f"\nMake_contact {new_contact}")
+            if phone is not "":
+                new_contact = {"name": name, "phone": phone}
+                print(f"\nMake_contact {new_contact}")
         finally:
-            if name and phone:
+            if new_contact["name"] is not "":
                 return new_contact
             max_tries -= 1
 
@@ -179,11 +194,12 @@ def work_with_phone_book():
         command = cmd.lower()
         if command == "add":
             new_contact = make_contact()
-            if not contact_list:
-                if check_for_duplicate(new_contact) is True:
+            if new_contact is not None:
+                if not contact_list:
+                    if check_for_duplicate(new_contact) is True:
+                        add_new_contact(new_contact)
+                else:
                     add_new_contact(new_contact)
-            else:
-                add_new_contact(new_contact)
         elif command == "delete":
             contact_name_to_delete = input("Which contact do you want to delete?: ")
             delete_contact_by_name(contact_name_to_delete)
