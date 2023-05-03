@@ -8,7 +8,3 @@
 Юлія Жук - yuliya.zhuk@example.com - 380972345678
 Володимир Сидоренко - volodymyr.syderenko@example.com - 0951234567
 Анна Дорошенко - anna.doroshenko@example.com - 380631234567
-
-
-
-
