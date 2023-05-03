@@ -1,0 +1,14 @@
+Іван Петрович - ivan.petrovych@example.com - +380931234567
+Марія Ковальчук - maria.kovalchuk@example.com - 380442345678
+Олексій Чернов - oleksiy.chernov@example.com - 0939876543
+Надія Шевченко - nadiya.shevchenko@example.com - +380997654321
+Максим Григорчук - maksym.hryhorchuk@example.com - 0671234567
+Світлана Іваненко - svitlana.ivanenko@example.com - 0501234567
+Андрій Малиновський - andriy.malynovskyi@example.com - 0661234567
+Юлія Жук - yuliya.zhuk@example.com - 380972345678
+Володимир Сидоренко - volodymyr.syderenko@example.com - 0951234567
+Анна Дорошенко - anna.doroshenko@example.com - 380631234567
+
+
+
+
